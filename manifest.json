@@ -1,0 +1,23 @@
+{
+	"manifest_version": 2,
+
+	"name": "scorecast",
+	"description": "This extension sends your current slither score to a remote server.",
+	"version": "1.0",
+	
+	"browser_action": {
+		"default_popup": "popup.html"
+	},
+	
+	"content_scripts": [
+		{
+			"matches": ["http://slither.io/"],
+			"js": ["jquery-2.2.3.min.js", "slithercast.js"]
+		}
+	],
+ 
+	"permissions": [
+		"activeTab",
+		"storage"
+  ]
+}
