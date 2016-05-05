@@ -3,6 +3,7 @@ $(document).on('DOMContentLoaded', function () {
 	var ids = {
 		currentTwitchId: 'currentTwitchId',
 		currentServer: 'currentServer',
+		highScores: 'highScores',
 		changeTwitchId: 'changeTwitchId',
 		twitchIdControls: 'twitchIdControls',
 		twitchIdInput: 'twitchIdInput',
@@ -29,6 +30,7 @@ $(document).on('DOMContentLoaded', function () {
 	
 	var $currentTwitchId = $('#' + ids.currentTwitchId);
 	var $currentServer = $('#' + ids.currentServer);
+	var $highScores = $('#' + ids.highScores);
 	var $changeTwitchId = $('#' + ids.changeTwitchId);
 	var $twitchIdControls = $('#' + ids.twitchIdControls);
 	var $twitchIdInput = $('#' + ids.twitchIdInput);
@@ -68,6 +70,18 @@ $(document).on('DOMContentLoaded', function () {
 		}
 		
 		$currentServer.text(currentServerValue);
+	});
+	
+	// Open the high scores UI in a new tab
+	$highScores.on('click', function() {
+		var win = window.open(currentServerValue + '/highscores', '_blank');
+		if(win){
+			//Browser has allowed it to be opened
+			win.focus();
+		} else {
+			//Broswer has blocked it
+			alert('Popups must be allowed in order to view high scores!');
+		}
 	});
 	
 	$changeTwitchId.on('click', function () {
