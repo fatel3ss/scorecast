@@ -24,7 +24,6 @@ $(document).on('DOMContentLoaded', function () {
 	
 	var enterKeycode = 13;
 	
-	var defaultServer = 'http://10.208.115.109:5000';
 	var twitchIdValue;
 	var currentServerValue;
 	
@@ -48,26 +47,20 @@ $(document).on('DOMContentLoaded', function () {
 		$currentTwitchId.text(twitchIdValue);
 	});
 	
-	// Get the server address for display
+	// Get the server address
 	chrome.storage.sync.get('server', function(item) {
 		currentServerValue = item.server;
 	
-		// Set default server for now if there isn't one
-		// TODO: Remove this
-		if (!currentServerValue) {
-			var storageKey = storageKeys.server;
-			var storageObject = {};
-			storageObject[storageKey] = defaultServer;
-			chrome.storage.sync.set(storageObject);
-			
-			currentServerValue = defaultServer;
-			
-			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-				messageObject = {};
-				messageObject[storageKey] = value;
-				chrome.tabs.sendMessage(tabs[0].id, messageObject);
-			});
-		}
+		var storageKey = storageKeys.server;
+		var storageObject = {};
+		storageObject[storageKey] = currentServerValue;
+		chrome.storage.sync.set(storageObject);
+		
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			messageObject = {};
+			messageObject[storageKey] = value;
+			chrome.tabs.sendMessage(tabs[0].id, messageObject);
+		});
 		
 		$currentServer.text(currentServerValue);
 	});
