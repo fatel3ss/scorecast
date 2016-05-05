@@ -12,7 +12,7 @@
 	"content_scripts": [
 		{
 			"matches": ["http://slither.io/"],
-			"js": ["jquery-2.2.3.min.js", "slithercast.js"]
+			"js": ["jquery-2.2.3.min.js", "scorecast.js"]
 		}
 	],
  

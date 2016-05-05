@@ -27,12 +27,8 @@
     }
 	.twitchId {
 		color: white;
-		#font-weight: bold;
 		font-size: 2.4rem;
 		font-weight: 200;
-	}
-	.currentServer {
-	
 	}
 	.background {
 		background-color: #6441a5;
@@ -61,11 +57,12 @@
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
 	<script src="jquery-2.2.3.min.js"></script>
-    <script src="popup.js"></script>
+	<script src="popup.js"></script>
   </head>
   <body class="background">
 	<div id="currentTwitchId" class="twitchId"></div>
-	<div id="currentServer" class="currentServer"></div>
+	<div id="currentServer"></div>
+	<div id="currentGame">Current game: Slither</div>
 	<div id="changeTwitchId" class="footerLink">Change Twitch ID</div>
 	<div id="twitchIdControls" class="hidden">
 		<input id="twitchIdInput" class="inputField">

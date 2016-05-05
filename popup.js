@@ -51,17 +51,22 @@ document.addEventListener('DOMContentLoaded', function () {
 		// Set default server for now if there isn't one
 		// TODO: Remove this
 		if (!currentServerValue) {
+			var storageKey = storageKeys.server;
 			var storageObject = {};
-			storageObject[storageKeys.server] = defaultServer;
+			storageObject[storageKey] = defaultServer;
 			chrome.storage.sync.set(storageObject);
 			
 			currentServerValue = defaultServer;
+			
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				messageObject = {};
+				messageObject[storageKey] = value;
+				chrome.tabs.sendMessage(tabs[0].id, messageObject);
+			});
 		}
 		
 		$currentServer.textContent = currentServerValue;
 	});
-	
-	
 	
 	$changeTwitchId.addEventListener('click', function () {
 		toggleVisibility($twitchIdControls);
