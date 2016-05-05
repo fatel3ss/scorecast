@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+$(document).on('DOMContentLoaded', function () {
+	// DOM ids
 	var ids = {
 		currentTwitchId: 'currentTwitchId',
 		currentServer: 'currentServer',
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		serverCancel: 'serverCancel',
 	}
 	
+	// Keys ids for local storage
 	var storageKeys = {
 		twitchId: 'twitchId',
 		server: 'server'
@@ -25,23 +27,23 @@ document.addEventListener('DOMContentLoaded', function () {
 	var twitchIdValue;
 	var currentServerValue;
 	
-	var $currentTwitchId = document.getElementById(ids.currentTwitchId);
-	var $currentServer = document.getElementById(ids.currentServer);
-	var $changeTwitchId = document.getElementById(ids.changeTwitchId);
-	var $twitchIdControls = document.getElementById(ids.twitchIdControls);
-	var $twitchIdInput = document.getElementById(ids.twitchIdInput);
-	var $twitchIdSave = document.getElementById(ids.twitchIdSave);
-	var $twitchIdCancel = document.getElementById(ids.twitchIdCancel);
-	var $changeServer = document.getElementById(ids.changeServer);
-	var $serverControls = document.getElementById(ids.serverControls);
-	var $serverInput = document.getElementById(ids.serverInput);
-	var $serverSave = document.getElementById(ids.serverSave);
-	var $serverCancel = document.getElementById(ids.serverCancel);
+	var $currentTwitchId = $('#' + ids.currentTwitchId);
+	var $currentServer = $('#' + ids.currentServer);
+	var $changeTwitchId = $('#' + ids.changeTwitchId);
+	var $twitchIdControls = $('#' + ids.twitchIdControls);
+	var $twitchIdInput = $('#' + ids.twitchIdInput);
+	var $twitchIdSave = $('#' + ids.twitchIdSave);
+	var $twitchIdCancel = $('#' + ids.twitchIdCancel);
+	var $changeServer = $('#' + ids.changeServer);
+	var $serverControls = $('#' + ids.serverControls);
+	var $serverInput = $('#' + ids.serverInput);
+	var $serverSave = $('#' + ids.serverSave);
+	var $serverCancel = $('#' + ids.serverCancel);
 	
 	// Get the user's twitch ID for display
 	chrome.storage.sync.get('twitchId', function(item) {
 		twitchIdValue = item.twitchId;
-		$currentTwitchId.textContent = twitchIdValue;
+		$currentTwitchId.text(twitchIdValue);
 	});
 	
 	// Get the server address for display
@@ -65,60 +67,60 @@ document.addEventListener('DOMContentLoaded', function () {
 			});
 		}
 		
-		$currentServer.textContent = currentServerValue;
+		$currentServer.text(currentServerValue);
 	});
 	
-	$changeTwitchId.addEventListener('click', function () {
+	$changeTwitchId.on('click', function () {
 		toggleVisibility($twitchIdControls);
 		hideControls($serverControls);
 	});
 	
-	$twitchIdCancel.addEventListener('click', function () {
+	$twitchIdCancel.on('click', function () {
 		toggleVisibility($twitchIdControls);
 	});
 	
-	$changeServer.addEventListener('click', function () {
+	$changeServer.on('click', function () {
 		toggleVisibility($serverControls);
 		hideControls($twitchIdControls);
 	});
 	
-	$serverCancel.addEventListener('click', function () {
+	$serverCancel.on('click', function () {
 		toggleVisibility($serverControls);
 	});
 	
 	// Save the input value by hitting enter
-	bindInputKeyupListeners($twitchIdInput, $twitchIdSave, storageKeys.twitchId, $twitchIdControls, $currentTwitchId);
-	bindInputKeyupListeners($serverInput, $serverSave, storageKeys.server, $serverControls, $currentServer);
+	bindInputKeyupEvent($twitchIdInput, $twitchIdSave, storageKeys.twitchId, $twitchIdControls, $currentTwitchId);
+	bindInputKeyupEvent($serverInput, $serverSave, storageKeys.server, $serverControls, $currentServer);
 	
 	// Bind listeners for Twitch ID and server change buttons
-	bindFooterLinkClickListeners($twitchIdSave, storageKeys.twitchId, $twitchIdInput, $twitchIdControls, $currentTwitchId);
-	bindFooterLinkClickListeners($serverSave, storageKeys.server, $serverInput, $serverControls, $currentServer);
+	bindFooterLinkClickEvent($twitchIdSave, storageKeys.twitchId, $twitchIdInput, $twitchIdControls, $currentTwitchId);
+	bindFooterLinkClickEvent($serverSave, storageKeys.server, $serverInput, $serverControls, $currentServer);
 	
 	// Validate and save the input value by hitting enter
-	function bindInputKeyupListeners($input, $save, storageKey, $controls, $currentDisplay) {
-		$input.addEventListener('keyup', function(evt) {
-			if($input.value.length > 0) {
-				$save.disabled = false;
+	function bindInputKeyupEvent($input, $save, storageKey, $controls, $currentDisplay) {
+		$input.on('keyup', function(evt) {
+			if($input.val().length > 0) {
+				$save.prop('disabled', false);
 				
 				if (evt.keyCode === enterKeycode) {
 					saveValue(storageKey, $input, $controls, $currentDisplay);
 				}
 			} else {
-				$save.disabled = true;
+				$save.prop('disabled', true);
 			}
 		});
 	}
 	
-	function bindFooterLinkClickListeners($saveButton, storageKey, $input, $controls, $currentDisplay) {
-		$saveButton.addEventListener('click', function() {
+	function bindFooterLinkClickEvent($saveButton, storageKey, $input, $controls, $currentDisplay) {
+		$saveButton.on('click', function() {
 			saveValue(storageKey, $input, $controls, $currentDisplay);
 		});
 	}
 	
 	function saveValue(storageKey, $input, $controls, $currentDisplay) {
-		value = $input.value;
+		value = $input.val();
 		
-		$currentDisplay.textContent = value;
+		$currentDisplay.text(value);
 			
 		// Clear the storage
 		chrome.storage.sync.remove(storageKey);
@@ -139,23 +141,23 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	// Show/hide the input controls and clear them
 	function toggleVisibility(element) {
-		if (element.classList.contains('hidden')) {
-			element.classList.remove('hidden');
+		if (element.hasClass('hidden')) {
+			element.removeClass('hidden');
 		} else {
-			element.classList.add('hidden');
+			element.addClass('hidden');
 		}
 		
 		clearInputs();
 	}
 	
 	function hideControls(controlElement) {
-		controlElement.classList.add('hidden');
+		controlElement.addClass('hidden');
 	}
 	
 	// Clear the inputs
 	function clearInputs() {
-		$twitchIdInput.value = '';
-		$serverInput.value = '';
+		$twitchIdInput.val('');
+		$serverInput.val('');
 	}
 	
 	function closePopup() {
