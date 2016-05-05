@@ -21,8 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	var enterKeycode = 13;
 	
-	//var server = 'http://10.208.115.109:5000';
+	var defaultServer = 'http://10.208.115.109:5000';
 	var twitchIdValue;
+	var currentServerValue;
 	
 	var $currentTwitchId = document.getElementById(ids.currentTwitchId);
 	var $currentServer = document.getElementById(ids.currentServer);
@@ -39,16 +40,32 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	// Get the user's twitch ID for display
 	chrome.storage.sync.get('twitchId', function(item) {
-		$currentTwitchId.textContent = item.twitchId;
+		twitchIdValue = item.twitchId;
+		$currentTwitchId.textContent = twitchIdValue;
 	});
 	
 	// Get the server address for display
 	chrome.storage.sync.get('server', function(item) {
-		$currentServer.textContent = item.server;
+		currentServerValue = item.server;
+	
+		// Set default server for now if there isn't one
+		// TODO: Remove this
+		if (!currentServerValue) {
+			var storageObject = {};
+			storageObject[storageKeys.server] = defaultServer;
+			chrome.storage.sync.set(storageObject);
+			
+			currentServerValue = defaultServer;
+		}
+		
+		$currentServer.textContent = currentServerValue;
 	});
+	
+	
 	
 	$changeTwitchId.addEventListener('click', function () {
 		toggleVisibility($twitchIdControls);
+		hideControls($serverControls);
 	});
 	
 	$twitchIdCancel.addEventListener('click', function () {
@@ -57,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	$changeServer.addEventListener('click', function () {
 		toggleVisibility($serverControls);
+		hideControls($twitchIdControls);
 	});
 	
 	$serverCancel.addEventListener('click', function () {
@@ -64,18 +82,24 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 	
 	// Save the input value by hitting enter
-	bindInputKeyupListeners($twitchIdInput, storageKeys.twitchId, $twitchIdControls, $currentTwitchId);
-	bindInputKeyupListeners($serverInput, storageKeys.server, $serverControls, $currentServer);
+	bindInputKeyupListeners($twitchIdInput, $twitchIdSave, storageKeys.twitchId, $twitchIdControls, $currentTwitchId);
+	bindInputKeyupListeners($serverInput, $serverSave, storageKeys.server, $serverControls, $currentServer);
 	
 	// Bind listeners for Twitch ID and server change buttons
 	bindFooterLinkClickListeners($twitchIdSave, storageKeys.twitchId, $twitchIdInput, $twitchIdControls, $currentTwitchId);
 	bindFooterLinkClickListeners($serverSave, storageKeys.server, $serverInput, $serverControls, $currentServer);
 	
-	// Save the input value by hitting enter
-	function bindInputKeyupListeners($input, storageKey, $controls, $currentDisplay) {
+	// Validate and save the input value by hitting enter
+	function bindInputKeyupListeners($input, $save, storageKey, $controls, $currentDisplay) {
 		$input.addEventListener('keyup', function(evt) {
-			if (evt.keyCode === enterKeycode) {
-				saveValue(storageKey, $input, $controls, $currentDisplay);
+			if($input.value.length > 0) {
+				$save.disabled = false;
+				
+				if (evt.keyCode === enterKeycode) {
+					saveValue(storageKey, $input, $controls, $currentDisplay);
+				}
+			} else {
+				$save.disabled = true;
 			}
 		});
 	}
@@ -117,6 +141,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 		
 		clearInputs();
+	}
+	
+	function hideControls(controlElement) {
+		controlElement.classList.add('hidden');
 	}
 	
 	// Clear the inputs
